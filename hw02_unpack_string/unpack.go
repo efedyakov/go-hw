@@ -14,6 +14,10 @@ func Unpack(str string) (string, error) {
 	var bbr rune
 	for _, r := range str {
 		switch {
+		case bbr != '\\' && unicode.IsDigit(br) && unicode.IsDigit(r):
+			{
+				return "", ErrInvalidString
+			}
 		case bbr != '\\' && br == '\\' && (r == '\\' || unicode.IsDigit(r)):
 			{
 			}
@@ -28,6 +32,9 @@ func Unpack(str string) (string, error) {
 					return "", ErrInvalidString
 				}
 				for i := 0; i < int(r)-'0'; i++ {
+					//if bbr == '\\' {
+					//	b.WriteRune(bbr)
+					//}
 					b.WriteRune(br)
 				}
 				r = 0
@@ -42,6 +49,9 @@ func Unpack(str string) (string, error) {
 	}
 	if br != 0 {
 		b.WriteRune(br)
+	}
+	if bbr != '\\' && br == '\\' {
+		return "", ErrInvalidString
 	}
 	return b.String(), nil
 }
