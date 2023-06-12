@@ -32,9 +32,6 @@ func Unpack(str string) (string, error) {
 					return "", ErrInvalidString
 				}
 				for i := 0; i < int(r)-'0'; i++ {
-					//if bbr == '\\' {
-					//	b.WriteRune(bbr)
-					//}
 					b.WriteRune(br)
 				}
 				r = 0
