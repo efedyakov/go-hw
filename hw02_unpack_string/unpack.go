@@ -10,10 +10,9 @@ var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(str string) (string, error) {
 	var b strings.Builder
-	var br rune = 0
-	var bbr rune = 0
+	var br rune
+	var bbr rune
 	for _, r := range str {
-
 		switch {
 		case bbr != '\\' && br == '\\' && (r == '\\' || unicode.IsDigit(r)):
 			{
@@ -37,7 +36,6 @@ func Unpack(str string) (string, error) {
 			{
 				b.WriteRune(br)
 			}
-
 		}
 		bbr = br
 		br = r
