@@ -2,12 +2,12 @@ package hw03frequencyanalysis
 
 import (
 	"sort"
-	s "strings"
+	"strings"
 )
 
 func split(input string) map[string]int {
 	var cache = make(map[string]int, 1)
-	for _, element := range s.Fields(input) {
+	for _, element := range strings.Fields(input) {
 		// for _, d := range []string{".", ",", "!", ":", `"`} {
 		// 	element = s.ReplaceAll(element, d, "")
 		// }
