@@ -6,7 +6,7 @@ import (
 )
 
 func split(input string) map[string]int {
-	var cache map[string]int = make(map[string]int, 1)
+	var cache = make(map[string]int, 1)
 	for _, element := range s.Fields(input) {
 		// for _, d := range []string{".", ",", "!", ":", `"`} {
 		// 	element = s.ReplaceAll(element, d, "")
