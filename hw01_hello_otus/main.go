@@ -1,5 +1,7 @@
 package main
 
 func main() {
-	// Place your code here.
+	hello := "Hello, OTUS!"
+	rhello := stringutil.Reverse(hello)
+	fmt.Println(rhello)
 }
