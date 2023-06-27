@@ -8,16 +8,16 @@ import (
 func split(input string) map[string]int {
 	var cache map[string]int = make(map[string]int, 1)
 	for _, element := range s.Fields(input) {
-		//for _, d := range []string{".", ",", "!", ":", `"`} {
-		//	element = s.ReplaceAll(element, d, "")
-		//}
-		cache[element] = cache[element] + 1
+		// for _, d := range []string{".", ",", "!", ":", `"`} {
+		// 	element = s.ReplaceAll(element, d, "")
+		// }
+		cache[element]++
 	}
 	return cache
 }
 
 func sortMapByValue(intput map[string]int) []string {
-	var keys []string = make([]string, 0)
+	var keys []string = make([]string, 0, 5)
 	for key := range intput {
 		keys = append(keys, key)
 	}
