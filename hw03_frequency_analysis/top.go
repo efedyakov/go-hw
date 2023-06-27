@@ -6,7 +6,7 @@ import (
 )
 
 func split(input string) map[string]int {
-	var cache = make(map[string]int, 1)
+	cache := make(map[string]int, 1)
 	for _, element := range strings.Fields(input) {
 		// for _, d := range []string{".", ",", "!", ":", `"`} {
 		// 	element = s.ReplaceAll(element, d, "")
@@ -17,7 +17,7 @@ func split(input string) map[string]int {
 }
 
 func sortMapByValue(intput map[string]int) []string {
-	var keys = make([]string, len(intput))
+	keys := make([]string, len(intput))
 	index := 0
 	for key := range intput {
 		keys[index] = key
