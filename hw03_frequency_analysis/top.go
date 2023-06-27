@@ -17,7 +17,7 @@ func split(input string) map[string]int {
 }
 
 func sortMapByValue(intput map[string]int) []string {
-	var keys []string = make([]string, 0, 5)
+	var keys []string
 	for key := range intput {
 		keys = append(keys, key)
 	}
