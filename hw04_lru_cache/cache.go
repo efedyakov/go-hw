@@ -25,24 +25,23 @@ func (lc *lruCache) Set(key Key, value interface{}) bool {
 		lc.queue.MoveToFront(lc.items[key])
 		lc.items[key].Value.(*pair).Value = value
 		return true
-	} else {
-		if lc.queue.Len() == lc.capacity {
-			delete(lc.items, lc.queue.Back().Value.(*pair).Key)
-			lc.queue.Remove(lc.queue.Back())
-		}
-		p := pair{Key: key, Value: value}
-		lc.items[key] = lc.queue.PushFront(&p)
-		return false
 	}
+
+	if lc.queue.Len() == lc.capacity {
+		delete(lc.items, lc.queue.Back().Value.(*pair).Key)
+		lc.queue.Remove(lc.queue.Back())
+	}
+	p := pair{Key: key, Value: value}
+	lc.items[key] = lc.queue.PushFront(&p)
+	return false
 }
 
 func (lc *lruCache) Get(key Key) (interface{}, bool) {
 	val, ok := lc.items[key]
 	if ok {
 		return val.Value.(*pair).Value, ok
-	} else {
-		return nil, ok
 	}
+	return nil, ok
 
 }
 
