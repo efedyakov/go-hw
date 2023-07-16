@@ -42,7 +42,6 @@ func (lc *lruCache) Get(key Key) (interface{}, bool) {
 		return val.Value.(*pair).Value, ok
 	}
 	return nil, ok
-
 }
 
 func (lc *lruCache) Clear() {
