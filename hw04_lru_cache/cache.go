@@ -39,6 +39,7 @@ func (lc *lruCache) Set(key Key, value interface{}) bool {
 func (lc *lruCache) Get(key Key) (interface{}, bool) {
 	val, ok := lc.items[key]
 	if ok {
+		lc.queue.MoveToFront(val)
 		return val.Value.(*pair).Value, ok
 	}
 	return nil, ok

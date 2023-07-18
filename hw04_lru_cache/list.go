@@ -64,6 +64,9 @@ func (l *list) PushBack(v interface{}) *ListItem {
 }
 
 func (l *list) Remove(e *ListItem) {
+	if e == nil {
+		return
+	}
 	l.Root.Next.Prev = &l.Root
 	l.Root.Prev.Next = &l.Root
 	e.Prev.Next = e.Next
