@@ -68,7 +68,6 @@ func TestCache(t *testing.T) {
 		_, ok = c.Get("ddd")
 
 		require.False(t, ok)
-
 	})
 }
 
