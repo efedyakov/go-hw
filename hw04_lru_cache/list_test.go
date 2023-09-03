@@ -48,4 +48,12 @@ func TestList(t *testing.T) {
 		}
 		require.Equal(t, []int{70, 80, 60, 40, 10, 30, 50}, elems)
 	})
+
+	t.Run("clear empty list", func(t *testing.T) {
+		l := NewList()
+
+		require.Equal(t, 0, l.Len())
+		l.Remove(l.Front())
+		require.Equal(t, 0, l.Len())
+	})
 }
