@@ -5,8 +5,10 @@ import (
 	"sync"
 )
 
-var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
-var ErrErrorsNotExistGoRoutine = errors.New("not exist goroutine")
+var (
+	ErrErrorsLimitExceeded     = errors.New("errors limit exceeded")
+	ErrErrorsNotExistGoRoutine = errors.New("not exist goroutine")
+)
 
 type Task func() error
 
