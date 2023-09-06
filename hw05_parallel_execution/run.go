@@ -6,16 +6,20 @@ import (
 )
 
 var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
+var ErrErrorsNotExistGoRoutine = errors.New("Not exist GoRoutine")
 
 type Task func() error
 
 type Result struct {
-	Message string
-	Error   error
+	// Message string
+	Error error
 }
 
 // Run starts tasks in n goroutines and stops its work when receiving m errors from tasks.
 func Run(tasks []Task, n, m int) error {
+	if n <= 0 {
+		return ErrErrorsNotExistGoRoutine
+	}
 	if n > len(tasks) {
 		n = len(tasks)
 	}
@@ -28,20 +32,18 @@ func Run(tasks []Task, n, m int) error {
 		defer wg.Done()
 		err := task()
 		if err != nil {
-			reschan <- Result{"ошибка в горутине", err}
+			reschan <- Result{err}
 			return
 		}
-		reschan <- Result{"", nil}
+		reschan <- Result{nil}
 	}
 
-	index := 0
-	for index < n {
-		go dosome(tasks[index])
-		index++
+	for i := 0; i < n; i++ {
+		go dosome(tasks[i])
 	}
 	counterror := 0
 
-	for index < len(tasks) {
+	for i := n; i < len(tasks); i++ {
 		res := <-reschan
 		if res.Error != nil {
 			counterror++
@@ -50,8 +52,7 @@ func Run(tasks []Task, n, m int) error {
 			break
 		}
 		wg.Add(1)
-		go dosome(tasks[index])
-		index++
+		go dosome(tasks[i])
 	}
 
 	wg.Wait()
