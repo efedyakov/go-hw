@@ -6,7 +6,7 @@ import (
 )
 
 var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
-var ErrErrorsNotExistGoRoutine = errors.New("Not exist GoRoutine")
+var ErrErrorsNotExistGoRoutine = errors.New("not exist goroutine")
 
 type Task func() error
 
