@@ -51,5 +51,4 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	}()
 
 	return dostage(inchan, done, stages...)
-
 }
