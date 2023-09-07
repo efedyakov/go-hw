@@ -8,7 +8,48 @@ type (
 
 type Stage func(in In) (out Out)
 
+func controldone(in In, done In) Out {
+	out := make(Bi)
+	go func() {
+		defer close(out)
+		for n := range in {
+			select {
+			case out <- n:
+			case <-done:
+				return
+			}
+		}
+	}()
+	return out
+}
+
+func dostage(in In, done In, stages ...Stage) Out {
+	if len(stages) > 1 {
+		return dostage(stages[0](controldone(in, done)), done, stages[1:]...)
+	}
+	return stages[0](controldone(in, done))
+}
+
 func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	// Place your code here.
-	return nil
+	inchan := make(Bi)
+	go func() {
+		defer close(inchan)
+		for {
+			select {
+			case <-done:
+				{
+					return
+				}
+			case v, ok := <-in:
+				if !ok {
+					return
+				}
+				inchan <- v
+			}
+		}
+	}()
+
+	return dostage(inchan, done, stages...)
+
 }
