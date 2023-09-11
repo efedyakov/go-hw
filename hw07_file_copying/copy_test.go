@@ -9,8 +9,8 @@ import (
 
 func TestCopy(t *testing.T) {
 	// Place your code here.
-	sfile := "/home/efedyakov/go/go-hw/hw07_file_copying/testdata/input.txt"
-	dfile := "/home/efedyakov/go/go-hw/hw07_file_copying/testdata/input2.txt"
+	sfile := "testdata/input.txt"
+	dfile := "testdata/input2.txt"
 
 	t.Run("simple copy", func(t *testing.T) {
 		err := Copy(sfile, dfile, 0, 0)
