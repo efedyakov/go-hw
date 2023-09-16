@@ -18,6 +18,10 @@ func init() {
 
 func main() {
 	flag.Parse()
-	Copy(from, to, offset, limit)
+	err := Copy(from, to, offset, limit)
+	if err != nil {
+		panic(err)
+	}
+
 	// Place your code here.
 }
