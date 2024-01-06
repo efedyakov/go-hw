@@ -2,7 +2,7 @@ package hw09structvalidator
 
 import (
 	"encoding/json"
-	"fmt"
+
 	"testing"
 )
 
@@ -37,24 +37,5 @@ type (
 )
 
 func TestValidate(t *testing.T) {
-	tests := []struct {
-		in          interface{}
-		expectedErr error
-	}{
-		{
-			// Place your code here.
-		},
-		// ...
-		// Place your code here.
-	}
 
-	for i, tt := range tests {
-		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
-			tt := tt
-			t.Parallel()
-
-			// Place your code here.
-			_ = tt
-		})
-	}
 }
