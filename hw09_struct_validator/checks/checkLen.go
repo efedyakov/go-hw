@@ -9,9 +9,9 @@ type Len struct {
 	length int
 }
 
-func NewCheckLen(string string, length int) Len {
+func NewCheckLen(str string, length int) Len {
 	return Len{
-		string: string,
+		string: str,
 		length: length,
 	}
 }

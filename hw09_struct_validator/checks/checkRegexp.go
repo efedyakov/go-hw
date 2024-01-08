@@ -10,9 +10,9 @@ type Regexp struct {
 	expr   string
 }
 
-func NewCheckRegexp(string, expr string) Regexp {
+func NewCheckRegexp(str, expr string) Regexp {
 	return Regexp{
-		string: string,
+		string: str,
 		expr:   expr,
 	}
 }

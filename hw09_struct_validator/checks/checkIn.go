@@ -10,9 +10,9 @@ type In struct {
 	values []string
 }
 
-func NewCheckIn(string string, values []string) In {
+func NewCheckIn(str string, values []string) In {
 	return In{
-		string: string,
+		string: str,
 		values: values,
 	}
 }
