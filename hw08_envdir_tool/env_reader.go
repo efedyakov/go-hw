@@ -47,7 +47,7 @@ func ReadDir(dir string) (Environment, error) {
 		r := bufio.NewReader(f)
 		data, err := r.ReadString('\n')
 		if err != nil {
-			if errors.Is(io.EOF, err) {
+			if !errors.Is(io.EOF, err) {
 				return nil, err
 			}
 		}
