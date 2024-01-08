@@ -51,21 +51,13 @@ func ReadDir(dir string) (Environment, error) {
 				return nil, err
 			}
 		}
-		/*data = strings.TrimRightFunc(data, func(r rune) bool {
-			switch r {
-			case '\t', '\n', ' ':
-				return true
-			}
-			return false
-		})*/
-		data = strings.TrimSpace(data)
+		data = strings.TrimRight(data, "\t \n")
 		data = strings.Map(func(r rune) rune {
 			if r == 0x00 {
 				return '\n'
 			}
 			return r
 		}, data)
-
 		env[file.Name()] = EnvValue{Value: data, NeedRemove: fi.Size() == 0}
 	}
 

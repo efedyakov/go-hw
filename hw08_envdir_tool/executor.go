@@ -19,11 +19,9 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	if env != nil {
 		envSlice := make([]string, 0, len(env))
 		for k, v := range env {
-			if !v.NeedRemove {
-				envSlice = append(envSlice, fmt.Sprintf("%s=%s", k, v.Value))
-			}
+			envSlice = append(envSlice, fmt.Sprintf("%s=%s", k, v.Value))
 		}
-		exe.Env = envSlice
+		exe.Env = append(os.Environ(), envSlice...)
 	}
 
 	err := exe.Run()
