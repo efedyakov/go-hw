@@ -2,7 +2,6 @@ package hw09structvalidator
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"strings"
 
@@ -35,7 +34,7 @@ func Validate(v interface{}) error {
 	vErrors := make(ValidationErrors, 0, iv.NumField())
 	var err error
 	for i := 0; i < iv.Type().NumField(); i++ {
-		vErrors, err = validateField(iv.Type().Field(i), iv.Field(i), vErrors, prefix)
+		vErrors, err = validateField(iv.Type().Field(i), iv.Field(i), vErrors)
 		if err != nil {
 			var ve ValidationErrors
 			if errors.As(err, &ve) {
@@ -55,32 +54,27 @@ func validateField(
 	field reflect.StructField,
 	value reflect.Value,
 	vErrors ValidationErrors,
-	prefix string,
 ) (ValidationErrors, error) {
 	if !field.IsExported() {
 		return vErrors, nil
 	}
 	if isNested(field) {
-		prefix = fmt.Sprintf("%s%s->", prefix, field.Name)
-		return vErrors, Validate(value.Interface(), prefix)
+		return vErrors, Validate(value.Interface())
 	}
-	ext := getRulesExtractor(field.Type.Kind(), field.Type)
-	if ext == nil {
-		return vErrors, nil
-	}
-	rules, err := ext.Extract(field, value)
+
+	checks, err := getChecks(field, value)
 	if err != nil {
 		return vErrors, err
 	}
-	for _, r := range rules {
-		valid, err := r.Validate()
+	for _, check := range checks {
+		valid, err := check.Validate()
 		if err != nil {
 			return vErrors, err
 		}
 		if !valid {
 			vErrors = append(vErrors, ValidationError{
 				Field: field.Name,
-				Err:   r.ValidationError(prefix + field.Name),
+				Err:   check.ValidationError(field.Name),
 			})
 		}
 	}
@@ -98,22 +92,38 @@ func isNested(field reflect.StructField) bool {
 	return tag == "nested"
 }
 
-func getChecks(field reflect.StructField, value reflect.Value /*kind reflect.Kind, fieldType reflect.Type*/) checks.Check {
-	switch field.Type.Kind() {
+func getChecks(field reflect.StructField, value reflect.Value) ([]checks.Check, error) {
+	switch field.Type.Kind() { //nolint: exhaustive
 	case reflect.String:
 		checks, err := checks.GetCheckString(field, value)
 		if err != nil {
-			return nil
+			return nil, err
 		}
-		return checks
+		return checks, nil
 	case reflect.Int:
-		/*if _, ok := extractors["int"]; !ok {
-			extractors["int"] = rule.NewIntRulesExtractor("validate", "|", ":", ",")
+		checks, err := checks.GetCheckInt(field, value)
+		if err != nil {
+			return nil, err
 		}
-		return extractors["int"]*/
+		return checks, nil
 	case reflect.Slice:
-		//return getSliceRulesExtractor(field.Type)
+		switch field.Type.String() {
+		case "[]string":
+			checks, err := checks.GetCheckString(field, value)
+			if err != nil {
+				return nil, err
+			}
+			return checks, nil
+		case "[]int":
+			checks, err := checks.GetCheckInt(field, value)
+			if err != nil {
+				return nil, err
+			}
+			return checks, nil
+		default:
+			return nil, nil
+		}
 	default:
-		return nil
+		return nil, nil
 	}
 }

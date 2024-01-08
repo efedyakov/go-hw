@@ -2,8 +2,11 @@ package hw09structvalidator
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type UserRole string
@@ -13,11 +16,11 @@ type (
 	User struct {
 		ID     string `json:"id" validate:"len:36"`
 		Name   string
-		Age    int             `validate:"min:18|max:50"`
-		Email  string          `validate:"regexp:^\\w+@\\w+\\.\\w+$"`
-		Role   UserRole        `validate:"in:admin,stuff"`
-		Phones []string        `validate:"len:11"`
-		meta   json.RawMessage //nolint:unused
+		Age    int      `validate:"min:18|max:50"`
+		Email  string   `validate:"regexp:^\\w+@\\w+\\.\\w+$"`
+		Role   UserRole `validate:"in:admin,stuff"`
+		Phones []string `validate:"len:11"`
+		meta   json.RawMessage
 	}
 
 	App struct {
@@ -42,18 +45,92 @@ func TestValidate(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			// Place your code here.
+			in: User{
+				ID:     "123456789012345678901234567890123456",
+				Name:   "Vasya Pupkin",
+				Age:    49,
+				Email:  "VasyaPupkin@gmail.com",
+				Role:   "admin",
+				Phones: []string{"12345678901", "12345678901"},
+				meta:   nil,
+			},
+			expectedErr: nil,
 		},
-		// ...
-		// Place your code here.
+		{
+			in: User{
+				ID:     "123456789012345678901234567890123456",
+				Name:   "Vasya Pupkin",
+				Age:    10,
+				Email:  "VasyaPupkin@gmailcom",
+				Role:   "worker",
+				Phones: []string{"1234567890", "12345678901"},
+				meta:   nil,
+			},
+			expectedErr: ValidationErrors{
+				ValidationError{
+					Field: "Age",
+					Err:   errors.New(`field "Age" less than 18`),
+				},
+				ValidationError{
+					Field: "Email",
+					Err:   errors.New(`field "Email" format is invalid`),
+				},
+				ValidationError{
+					Field: "Role",
+					Err:   errors.New(`field "Role" not have value in: admin, stuff`),
+				},
+				ValidationError{
+					Field: "Phones",
+					Err:   errors.New(`field "Phones" must have len 11`),
+				},
+			},
+		},
+		{
+			in: App{
+				Version: "12345",
+			},
+			expectedErr: nil,
+		},
+		{
+			in: Response{
+				Code: 404,
+				Body: "{id:123}",
+			},
+			expectedErr: nil,
+		},
+		{
+			in: Response{
+				Code: 0,
+				Body: "{id:123}",
+			},
+			expectedErr: ValidationErrors{
+				ValidationError{
+					Field: "Code",
+					Err:   errors.New(`field "Code" not have value in: 200, 404, 500`),
+				},
+			},
+		},
 	}
 
-	for i, tt := range tests {
-		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+	for index, tt := range tests {
+		index := index
+		t.Run(fmt.Sprintf("case %d", index), func(t *testing.T) {
 			tt := tt
 			t.Parallel()
-
-			// Place your code here.
+			testname := fmt.Sprintf("%d", index)
+			t.Run(testname, func(t *testing.T) {
+				t.Parallel()
+				err := Validate(tt.in)
+				if tt.expectedErr == nil {
+					require.NoError(t, err)
+				}
+				var vError ValidationErrors
+				if errors.As(err, &vError) {
+					require.Equal(t, tt.expectedErr.Error(), err.Error())
+				} else {
+					require.ErrorIs(t, err, tt.expectedErr)
+				}
+			})
 			_ = tt
 		})
 	}
