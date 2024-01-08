@@ -42,7 +42,7 @@ func TestReadDir(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, true, env["UNSET"].NeedRemove)
 		require.Equal(t, "", env["EMPTY"].Value)
-		require.Equal(t, "foo\nwith new line", env["FOO"].Value)
+		require.Equal(t, "   foo\nwith new line", env["FOO"].Value)
 		require.NotEmpty(t, env)
 	})
 }
