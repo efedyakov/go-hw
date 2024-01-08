@@ -65,7 +65,7 @@ func GetCheckString(field reflect.StructField, value reflect.Value) ([]Check, er
 func getChecksLen(checks []Check, value reflect.Value, length int) []Check {
 	if value.Type().String() == arrString {
 		l := value.Len()
-		for i := 0; i < l; i++ {
+
 			return append(checks, NewCheckLen(value.Index(i).String(), length))
 		}
 	}
@@ -75,7 +75,7 @@ func getChecksLen(checks []Check, value reflect.Value, length int) []Check {
 func getChecksRegexp(checks []Check, value reflect.Value, regexp string) []Check {
 	if value.Type().String() == arrString {
 		l := value.Len()
-		for i := 0; i < l; i++ {
+		for i, _ := 0, 0; i < l; i++ {
 			return append(checks, NewCheckRegexp(value.Index(i).String(), regexp))
 		}
 	}
@@ -86,7 +86,7 @@ func getChecksIn(checks []Check, value reflect.Value, valsstr string) []Check {
 	vals := strings.Split(valsstr, valueSeparator)
 	if value.Type().String() == arrString {
 		l := value.Len()
-		for i := 0; i < l; i++ {
+		for i, _ := 0, 0; i < l; i++ {
 			return append(checks, NewCheckIn(value.Index(i).String(), vals))
 		}
 	}
@@ -130,7 +130,7 @@ func getChecksInint(checks []Check, value reflect.Value, valsstr string) []Check
 	vals := strings.Split(valsstr, valueSeparator)
 	if value.Type().String() == arrInt {
 		l := value.Len()
-		for j := 0; j < l; j++ {
+		for j, _ := 0, 0; j < l; j++ {
 			return append(checks, NewCheckIn(strconv.FormatInt(value.Index(j).Int(), 10), vals))
 		}
 	}
@@ -140,7 +140,7 @@ func getChecksInint(checks []Check, value reflect.Value, valsstr string) []Check
 func getChecksMax(checks []Check, value reflect.Value, max int) []Check {
 	if value.Type().String() == arrInt {
 		l := value.Len()
-		for j := 0; j < l; j++ {
+		for j, _ := 0, 0; j < l; j++ {
 			return append(checks, NewCheckMax(value.Index(j).Int(), int64(max)))
 		}
 	}
@@ -150,7 +150,7 @@ func getChecksMax(checks []Check, value reflect.Value, max int) []Check {
 func getChecksMin(checks []Check, value reflect.Value, min int) []Check {
 	if value.Type().String() == arrInt {
 		l := value.Len()
-		for j := 0; j < l; j++ {
+		for j, _ := 0, 0; j < l; j++ {
 			return append(checks, NewCheckMin(value.Index(j).Int(), int64(min)))
 		}
 	}
