@@ -65,11 +65,13 @@ func GetCheckString(field reflect.StructField, value reflect.Value) ([]Check, er
 func getChecksLen(checks []Check, value reflect.Value, length int) []Check {
 	if value.Type().String() == arrString {
 		l := value.Len()
-
-			return append(checks, NewCheckLen(value.Index(i).String(), length))
+		for i, _ := 0, 0; i < l; i++ {
+			checks = append(checks, NewCheckLen(value.Index(i).String(), length))
 		}
+	} else {
+		checks = append(checks, NewCheckLen(value.String(), length))
 	}
-	return append(checks, NewCheckLen(value.String(), length))
+	return checks
 }
 
 func getChecksRegexp(checks []Check, value reflect.Value, regexp string) []Check {
