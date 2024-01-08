@@ -18,6 +18,9 @@ const (
 	tagSeparator   = "|"
 	checkSeparator = ":"
 	valueSeparator = ","
+
+	arrString = "[]string"
+	arrInt    = "[]int"
 )
 
 var (
@@ -45,39 +48,48 @@ func GetCheckString(field reflect.StructField, value reflect.Value) ([]Check, er
 			if err != nil {
 				return nil, ErrCheckStringNotValid
 			}
-			if value.Type().String() == "[]string" {
-				for j := 0; j < value.Len(); j++ {
-					checks = append(checks, NewCheckLen(value.Index(j).String(), length))
-				}
-			} else {
-				checks = append(checks, NewCheckLen(value.String(), length))
-			}
+			checks = getChecksLen(checks, value, length)
 		case checkRegexp:
 			if checkVal == "" {
 				return nil, ErrCheckStringNotValid
 			}
-			if value.Type().String() == "[]string" {
-				for j := 0; j < value.Len(); j++ {
-					checks = append(checks, NewCheckRegexp(value.Index(j).String(), checkVal))
-				}
-			} else {
-				checks = append(checks, NewCheckRegexp(value.String(), checkVal))
-			}
+			checks = getChecksRegexp(checks, value, checkVal)
 		case checkIn:
 			if checkVal == "" {
 				return nil, ErrCheckStringNotValid
 			}
-			vals := strings.Split(checkVal, valueSeparator)
-			if value.Type().String() == "[]string" {
-				for j := 0; j < value.Len(); j++ {
-					checks = append(checks, NewCheckIn(value.Index(j).String(), vals))
-				}
-			} else {
-				checks = append(checks, NewCheckIn(value.String(), vals))
-			}
+			checks = getChecksIn(checks, value, checkVal)
 		}
 	}
 	return checks, nil
+}
+
+func getChecksLen(checks []Check, value reflect.Value, length int) []Check {
+	if value.Type().String() == arrString {
+		for j := 0; j < value.Len(); j++ {
+			return append(checks, NewCheckLen(value.Index(j).String(), length))
+		}
+	}
+	return append(checks, NewCheckLen(value.String(), length))
+}
+
+func getChecksRegexp(checks []Check, value reflect.Value, regexp string) []Check {
+	if value.Type().String() == arrString {
+		for j := 0; j < value.Len(); j++ {
+			return append(checks, NewCheckRegexp(value.Index(j).String(), regexp))
+		}
+	}
+	return append(checks, NewCheckRegexp(value.String(), regexp))
+}
+
+func getChecksIn(checks []Check, value reflect.Value, valsstr string) []Check {
+	vals := strings.Split(valsstr, valueSeparator)
+	if value.Type().String() == arrString {
+		for j := 0; j < value.Len(); j++ {
+			return append(checks, NewCheckIn(value.Index(j).String(), vals))
+		}
+	}
+	return append(checks, NewCheckIn(value.String(), vals))
 }
 
 func GetCheckInt(field reflect.StructField, value reflect.Value) ([]Check, error) {
@@ -96,7 +108,7 @@ func GetCheckInt(field reflect.StructField, value reflect.Value) ([]Check, error
 				return nil, ErrCheckStringNotValid
 			}
 			vals := strings.Split(checkVal, valueSeparator)
-			if value.Type().String() == "[]int" {
+			if value.Type().String() == arrInt {
 				for j := 0; j < value.Len(); j++ {
 					checks = append(checks, NewCheckIn(strconv.FormatInt(value.Index(j).Int(), 10), vals))
 				}
@@ -108,7 +120,7 @@ func GetCheckInt(field reflect.StructField, value reflect.Value) ([]Check, error
 			if err != nil {
 				return nil, err
 			}
-			if value.Type().String() == "[]int" {
+			if value.Type().String() == arrInt {
 				for j := 0; j < value.Len(); j++ {
 					checks = append(checks, NewCheckMin(value.Index(j).Int(), int64(min)))
 				}
@@ -120,7 +132,7 @@ func GetCheckInt(field reflect.StructField, value reflect.Value) ([]Check, error
 			if err != nil {
 				return nil, err
 			}
-			if value.Type().String() == "[]int" {
+			if value.Type().String() == arrInt {
 				for j := 0; j < value.Len(); j++ {
 					checks = append(checks, NewCheckMax(value.Index(j).Int(), int64(max)))
 				}
