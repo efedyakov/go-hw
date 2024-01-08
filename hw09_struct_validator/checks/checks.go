@@ -107,39 +107,48 @@ func GetCheckInt(field reflect.StructField, value reflect.Value) ([]Check, error
 			if checkVal == "" {
 				return nil, ErrCheckStringNotValid
 			}
-			vals := strings.Split(checkVal, valueSeparator)
-			if value.Type().String() == arrInt {
-				for j := 0; j < value.Len(); j++ {
-					checks = append(checks, NewCheckIn(strconv.FormatInt(value.Index(j).Int(), 10), vals))
-				}
-			} else {
-				checks = append(checks, NewCheckIn(strconv.FormatInt(value.Int(), 10), vals))
-			}
+			checks = getChecksIn_int(checks, value, checkVal)
 		case checkMin:
 			min, err := strconv.Atoi(checkVal)
 			if err != nil {
 				return nil, err
 			}
-			if value.Type().String() == arrInt {
-				for j := 0; j < value.Len(); j++ {
-					checks = append(checks, NewCheckMin(value.Index(j).Int(), int64(min)))
-				}
-			} else {
-				checks = append(checks, NewCheckMin(value.Int(), int64(min)))
-			}
+			checks = getChecksMin(checks, value, min)
 		case checkMax:
 			max, err := strconv.Atoi(checkVal)
 			if err != nil {
 				return nil, err
 			}
-			if value.Type().String() == arrInt {
-				for j := 0; j < value.Len(); j++ {
-					checks = append(checks, NewCheckMax(value.Index(j).Int(), int64(max)))
-				}
-			} else {
-				checks = append(checks, NewCheckMax(value.Int(), int64(max)))
-			}
+			checks = getChecksMax(checks, value, max)
 		}
 	}
 	return checks, nil
+}
+
+func getChecksIn_int(checks []Check, value reflect.Value, valsstr string) []Check {
+	vals := strings.Split(valsstr, valueSeparator)
+	if value.Type().String() == arrInt {
+		for j := 0; j < value.Len(); j++ {
+			return append(checks, NewCheckIn(strconv.FormatInt(value.Index(j).Int(), 10), vals))
+		}
+	}
+	return append(checks, NewCheckIn(strconv.FormatInt(value.Int(), 10), vals))
+}
+
+func getChecksMax(checks []Check, value reflect.Value, max int) []Check {
+	if value.Type().String() == arrInt {
+		for j := 0; j < value.Len(); j++ {
+			return append(checks, NewCheckMax(value.Index(j).Int(), int64(max)))
+		}
+	}
+	return append(checks, NewCheckMax(value.Int(), int64(max)))
+}
+
+func getChecksMin(checks []Check, value reflect.Value, min int) []Check {
+	if value.Type().String() == arrInt {
+		for j := 0; j < value.Len(); j++ {
+			return append(checks, NewCheckMin(value.Index(j).Int(), int64(min)))
+		}
+	}
+	return append(checks, NewCheckMin(value.Int(), int64(min)))
 }
