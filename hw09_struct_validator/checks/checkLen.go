@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -22,5 +21,5 @@ func (l Len) Validate() (bool, error) {
 }
 
 func (l Len) ValidationError(field string) error {
-	return errors.New(fmt.Sprintf("field %q must have len %d", field, l.length))
+	return fmt.Errorf("field %q must have len %d", field, l.length)
 }

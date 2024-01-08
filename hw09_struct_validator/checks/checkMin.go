@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -22,5 +21,5 @@ func (m Min) Validate() (bool, error) {
 }
 
 func (m Min) ValidationError(field string) error {
-	return errors.New(fmt.Sprintf("field %q less than %d", field, m.min))
+	return fmt.Errorf("field %q less than %d", field, m.min)
 }

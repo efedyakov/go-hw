@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -28,5 +27,5 @@ func (i In) Validate() (bool, error) {
 }
 
 func (i In) ValidationError(field string) error {
-	return errors.New(fmt.Sprintf("field %q not have value in: %s", field, strings.Join(i.values, ", ")))
+	return fmt.Errorf("field %q not have value in: %s", field, strings.Join(i.values, ", "))
 }

@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -22,5 +21,5 @@ func (m Max) Validate() (bool, error) {
 }
 
 func (m Max) ValidationError(field string) error {
-	return errors.New(fmt.Sprintf("field %q greater than %d", field, m.max))
+	return fmt.Errorf("field %q greater than %d", field, m.max)
 }

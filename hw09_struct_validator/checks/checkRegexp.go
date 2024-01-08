@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 )
@@ -27,5 +26,5 @@ func (r Regexp) Validate() (bool, error) {
 }
 
 func (r Regexp) ValidationError(field string) error {
-	return errors.New(fmt.Sprintf("field %q format is invalid", field))
+	return fmt.Errorf("field %q format is invalid", field)
 }

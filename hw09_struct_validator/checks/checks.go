@@ -107,7 +107,7 @@ func GetCheckInt(field reflect.StructField, value reflect.Value) ([]Check, error
 			if checkVal == "" {
 				return nil, ErrCheckStringNotValid
 			}
-			checks = getChecksIn_int(checks, value, checkVal)
+			checks = getChecksInint(checks, value, checkVal)
 		case checkMin:
 			min, err := strconv.Atoi(checkVal)
 			if err != nil {
@@ -125,7 +125,7 @@ func GetCheckInt(field reflect.StructField, value reflect.Value) ([]Check, error
 	return checks, nil
 }
 
-func getChecksIn_int(checks []Check, value reflect.Value, valsstr string) []Check {
+func getChecksInint(checks []Check, value reflect.Value, valsstr string) []Check {
 	vals := strings.Split(valsstr, valueSeparator)
 	if value.Type().String() == arrInt {
 		for j := 0; j < value.Len(); j++ {
