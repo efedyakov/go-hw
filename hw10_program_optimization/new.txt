@@ -1,0 +1,6 @@
+=== RUN   TestGetDomainStat_Time_And_Memory
+    stats_optimization_test.go:46: time used: 195.561158ms / 300ms
+    stats_optimization_test.go:47: memory used: 25Mb / 30Mb
+--- PASS: TestGetDomainStat_Time_And_Memory (2.65s)
+PASS
+ok  	github.com/fixme_my_friend/hw10_program_optimization	2.656s
