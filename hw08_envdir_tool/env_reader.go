@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -43,14 +44,20 @@ func ReadDir(dir string) (Environment, error) {
 			return nil, err
 		}
 		r := bufio.NewReader(f)
-		data, _ := r.ReadString('\n')
-		data = strings.TrimRightFunc(data, func(r rune) bool {
+		data, err := r.ReadString('\n')
+		if err != nil {
+			if err != io.EOF {
+				return nil, err
+			}
+		}
+		/*data = strings.TrimRightFunc(data, func(r rune) bool {
 			switch r {
 			case '\t', '\n', ' ':
 				return true
 			}
 			return false
-		})
+		})*/
+		data = strings.TrimSpace(data)
 		data = strings.Map(func(r rune) rune {
 			if r == 0x00 {
 				return '\n'

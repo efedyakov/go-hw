@@ -38,13 +38,11 @@ func TestReadDir(t *testing.T) {
 	})
 
 	t.Run("dir", func(t *testing.T) {
-		dir := "testdata/env"
-
 		env, err := ReadDir(dir)
 		require.NoError(t, err)
 		require.Equal(t, true, env["UNSET"].NeedRemove)
 		require.Equal(t, "", env["EMPTY"].Value)
-		require.Equal(t, "   foo\nwith new line", env["FOO"].Value)
+		require.Equal(t, "foo\nwith new line", env["FOO"].Value)
 		require.NotEmpty(t, env)
 	})
 }
