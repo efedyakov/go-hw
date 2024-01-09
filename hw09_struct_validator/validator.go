@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/efedyakov/go-hw/hw09_struct_validator/checks"
+
 )
 
 type ValidationError struct {
@@ -25,6 +26,8 @@ func (v ValidationErrors) Error() string {
 	}
 	return builder.String()
 }
+
+var validate *validator.Validate
 
 func Validate(v interface{}) error {
 	if reflect.TypeOf(v).Kind() != reflect.Struct {

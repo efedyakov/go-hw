@@ -65,7 +65,6 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 		an += n
 		fmt.Printf("Progress: %3.2f%%", 100*float32(size)/float32(an))
-
 		if !errors.Is(err, nil) && !errors.Is(err, io.EOF) {
 			return err
 		}
