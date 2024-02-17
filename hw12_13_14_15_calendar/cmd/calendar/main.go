@@ -2,22 +2,53 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/app"
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/logger"
-	internalhttp "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/server/http"
-	memorystorage "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage/memory"
+	"github.com/efedyakov/go-hw/hw12_13_14_15_calendar/internal/app"
+	"github.com/efedyakov/go-hw/hw12_13_14_15_calendar/internal/logger"
+	internalhttp "github.com/efedyakov/go-hw/hw12_13_14_15_calendar/internal/server/http"
+	memorystorage "github.com/efedyakov/go-hw/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/efedyakov/go-hw/hw12_13_14_15_calendar/internal/storage/sql"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
+)
+
+const (
+	storageTypeMemory = "memory"
+	storageTypeSQL    = "sql"
 )
 
 var configFile string
 
 func init() {
-	flag.StringVar(&configFile, "config", "/etc/calendar/config.toml", "Path to configuration file")
+	flag.StringVar(&configFile, "envconfig", "config.toml", "Path to configuration file")
+}
+
+func NewStorage(ctx context.Context, config Config) (app.Storage, error) {
+	var storage app.Storage
+
+	switch config.App.StorageType {
+	case storageTypeMemory:
+		storage = memorystorage.New()
+	case storageTypeSQL:
+		ss, err := sqlstorage.New(config.PostgreSQL.BuildDSN())
+		if err != nil {
+			return nil, err
+		}
+		if err := ss.Connect(ctx); err != nil {
+			return nil, err
+		}
+		storage = ss
+	default:
+		return nil, errors.New("storage type not supported")
+	}
+
+	return storage, nil
 }
 
 func main() {
@@ -28,11 +59,27 @@ func main() {
 		return
 	}
 
-	config := NewConfig()
-	logg := logger.New(config.Logger.Level)
+	if err := godotenv.Load(configFile); err != nil {
+		panic(err)
+	}
 
-	storage := memorystorage.New()
-	calendar := app.New(logg, storage)
+	config := NewConfig()
+	if err := envconfig.Process("", &config); err != nil {
+		panic(err)
+	}
+
+	logg, _ := logger.New(config.Logger.Level)
+	ctx := context.Background()
+
+	storage, err := NewStorage(ctx, config)
+	if err != nil {
+		logg.Fatal("failed to create a storage: " + err.Error())
+	}
+	if s, ok := storage.(sqlstorage.Storage); ok {
+		defer s.Close(ctx)
+	}
+
+	calendar := app.New(config.App.Name, logg, storage)
 
 	server := internalhttp.NewServer(logg, calendar)
 
