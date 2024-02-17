@@ -1,1 +1,13 @@
 version: "3"
+
+services:
+  postgres:
+    image: postgres:13.6-alpine
+    environment:
+      POSTGRES_DB: calendar
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./docker/pgdata:/var/lib/postgresql/data:rw
+    ports:
+      - "25432:5432"

@@ -13,17 +13,17 @@ type Logger interface { // TODO
 type Application interface { // TODO
 }
 
-func NewServer(logger Logger, app Application) *Server {
+func NewServer(logger Logger, app Application) *Server { //nolint:unused
 	return &Server{}
 }
 
-func (s *Server) Start(ctx context.Context) error {
+func (s *Server) Start(ctx context.Context) error { //nolint:unused
 	// TODO
 	<-ctx.Done()
 	return nil
 }
 
-func (s *Server) Stop(ctx context.Context) error {
+func (s *Server) Stop(ctx context.Context) error { //nolint:unused
 	// TODO
 	return nil
 }

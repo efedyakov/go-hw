@@ -1,7 +1,14 @@
 package logger
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLogger(t *testing.T) {
-	// TODO
+	t.Run("test log", func(t *testing.T) {
+		l, _ := New("Info")
+		l.Info("Info")
+		l.Warn("Warn")
+		l.Error("Error")
+	})
 }
